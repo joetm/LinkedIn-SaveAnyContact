@@ -1,4 +1,5 @@
 (function () {
+	'use strict';
 
     // hook into the menu
     var navUL = document.querySelector('#network-sub-nav');

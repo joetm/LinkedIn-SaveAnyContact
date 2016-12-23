@@ -1,4 +1,5 @@
 (function () {
+    'use strict';
 
     // source: https://static.licdn.com/scds/common/u/images/themes/katy/ghosts/person/ghost_person_80x80_v1.png
     var ghost_image = chrome.extension.getURL("img/ghost_person_80x80_v1.png");
