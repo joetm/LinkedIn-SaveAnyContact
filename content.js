@@ -8,6 +8,14 @@
 
     var animation_duration = 0.5;
 
+    // see http://stackoverflow.com/a/822486/426266
+    function stripHtml(html)
+    {
+       var tmp = document.createElement("DIV");
+       tmp.innerHTML = html;
+       return tmp.textContent || tmp.innerText || "";
+    }
+
     var htmlentities = function (s) {
         // see http://stackoverflow.com/a/18750001/426266
         return s.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
@@ -146,6 +154,9 @@
                             :
                           `<img src="${ghost_image}" height="150" width="150" alt="">`
                     );
+
+                    // strip html
+                    person.position = stripHtml(person.position);
 
                     tpl += `<li id="local-contact-${keys[i]}" class="engagement-card with-dimiss-button customcard"
                          style="-moz-transition: width ${animation_duration}s
