@@ -1,0 +1,44 @@
+.clearfix:after,.clearfix:before{display:table;content:" "}
+.clearfix:after{clear:both}
+
+.engagement-card.with-dimiss-button:hover  .action-button.custom {
+	cursor:default;
+}
+.engagement-card.with-dimiss-button:hover .action-button.custom, .engagement-card.with-dimiss-button:focus .action-button.custom{
+	width: 147px;
+}
+.engagement-action-container .dismiss-button.custom {
+	width:170px;
+}
+.engagement-card.with-dimiss-button .dismiss-button.custom a.left a{
+	float:left;
+}
+.engagement-card.with-dimiss-button .dismiss-button.custom a.right a{
+	float:right;
+}
+
+.engagement-card.customcard {
+	width:185px;
+}
+.engagement-card.customcard .engagement-body-left {
+	width:auto;
+	height:185px;
+}
+.engagement-card.customcard img{
+	width:185px;
+	height:185px;
+}
+
+.engagement-card.customcard .engagement-action-container .done,
+.engagement-card.customcard .engagement-action-container .action-button {
+	transition: width 0.2s linear;
+	width: 185px;
+}
+.engagement-card.with-dimiss-button.customcard:hover .action-button.custom,
+.engagement-card.with-dimiss-button.customcard:focus .action-button.custom {
+    width: 185px;
+    margin:-185px;
+}
+.engagement-card.with-dimiss-button.customcard .dismiss-button.custom {
+    width:185px;
+}
