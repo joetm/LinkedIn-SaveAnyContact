@@ -34,7 +34,6 @@ That means two things:
 
 TODO
 ====
-* remove the HTML in the descriptions
 * Add to Chrome Web Store
 * Improve position of the contact list on the network page
 * Sync to other browsers.
