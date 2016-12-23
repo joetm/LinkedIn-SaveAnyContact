@@ -38,7 +38,7 @@
         event.stopPropagation();
         var id = this.dataset.id;
         if (!id) {
-            console.error('ID '+ id +' not found in DOM');
+            console.error(`ID ${id} not found in DOM`);
             return;
         }
         chrome.storage.local.remove(id, function() {
@@ -119,8 +119,8 @@
                     numContacts = 0;
 
 
-                tpl = '<div id="local-contacts" class="engagement-list" style="display: block;">';
-                tpl += '<ul class="items clearfix" style="height: auto;">';
+                tpl = `<div id="local-contacts" class="engagement-list" style="display: block;">
+                        <ul class="items clearfix" style="height: auto;">`;
 
                 var avatar = '';
 
@@ -174,19 +174,17 @@
                     </li>`;
                 }
 
-                tpl += '</ul>';
 
                 // TODO
                 // pagination
 
-                tpl += '<div class="more-bar-container" style="display: block;">';
-                tpl += '  <div class="ruler"></div>';
-                tpl += '  <div class="more-bar-wrapper" style="visibility: visible;">';
-                tpl += '  </div>';
-                tpl += '</div>';
-
-                tpl += '</div>';
-
+                tpl += `</ul>
+                <div class="more-bar-container" style="display: block;">
+                  <div class="ruler"></div>
+                  <div class="more-bar-wrapper" style="visibility: visible;">
+                  </div>
+                </div>
+                </div>`;
 
 
                 header = `<div class="top-bar with-image">
@@ -220,7 +218,7 @@
                 var listcontainer = document.querySelector('#contact-list-container');
                 listcontainer.parentNode.insertBefore(newdiv, listcontainer);
 
-                // events
+                // events for buttons
                 var removebuttons = document.querySelectorAll('.removebutton');
                 for (var j = 0, t = removebuttons.length; j < t; j++) {
                     removebuttons[j].addEventListener('click', remove);
