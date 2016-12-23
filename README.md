@@ -12,7 +12,7 @@ Installation
 
 Download the contents of this repository to a folder.
 Go to the extensions manager in Google Chrome.
-Click the load unpacked extension button and open the place where you stored this extension.
+Click the "load unpacked extension" button and open the place where you stored this extension.
 
 Usage
 =====

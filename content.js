@@ -1,30 +1,5 @@
 (function () {
 
-	// JavaScript template engine by Krasimir Tsonev
-	// http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
-	var TemplateEngine = function(html, data) {
-	    var re = /<%([^%>]+)?%>/g, reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g, code = 'var r=[];\n', cursor = 0, match;
-	    var add = function(line, js) {
-	        js? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
-	            (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
-	        return add;
-	    }
-	    while(match = re.exec(html)) {
-	        add(html.slice(cursor, match.index))(match[1], true);
-	        cursor = match.index + match[0].length;
-	    }
-	    add(html.substr(cursor, html.length - cursor));
-	    code += 'return r.join("");';
-	    return new Function(code.replace(/[\r\t\n]/g, '')).apply(data);
-	}
-
-	function parse_tpl(key, tpl, data) {
-	    // var cache = {};
-	    // cache[key] = tpl;
-	    tpl = TemplateEngine(tpl, data);
-	    return tpl;
-	}
-
     // source: https://static.licdn.com/scds/common/u/images/themes/katy/ghosts/person/ghost_person_80x80_v1.png
     var ghost_image = chrome.extension.getURL("img/ghost_person_80x80_v1.png");
     // source: https://static-akam.licdn.com/sc/h/8seg2cwqjwoudeus3mbk7d9jo
@@ -49,7 +24,6 @@
 
 
     var url = window.location.href;
-
     // profile page?
     if (url.indexOf('/in/') !== -1) {
         profile_page(url);
@@ -79,11 +53,18 @@
                     box.parentNode.removeChild(box);
                 }, animation_duration*1000);
                 console.log('Removed contact');
+                // reduce the contact count by 1
+                var numNode = document.querySelector('#num_contacts');
+                if (numNode) {
+                    var cnt = numNode.innerText - 1;
+                    numNode.innerText = cnt < 0 ? 0 : cnt;
+                }
             }
         });
     }
 
-    // http://stackoverflow.com/a/9714891/426266
+    // test if the stored image still resolves
+    // see http://stackoverflow.com/a/9714891/426266
     function testImage(personid, url, timeout, callback) {
         timeout = timeout || 5000;
         var timedOut = false,
@@ -134,37 +115,18 @@
                 var keys = Object.keys(items),
                     person,
                     header,
-                    tpl;
+                    tpl,
+                    numContacts = 0;
 
-                header = '';
-                header += '<div class="top-bar with-image">';
-                header += '  <div class="header">';
-                header += '    <div class="image-wrapper big-icon">';
-                header += '      <img src="'+topbar_image+'" alt="" class="connected-icon">';
-                header += '    </div>';
-                header += '    <div class="left-entity">';
-                header += '      <div class="content-wrapper">';
-                header += '        <h1 class="name">Stored Contacts</h1>';
-                header += '        <h3>You have <span id="num_contacts"></span> locally stored contacts.</h3>';
-                header += '      </div>';
-                header += '    </div>';
-                header += '  </div>';
-                header += '  <div class="header-dropdown">';
-                header += '    <ul class="page-header-menu">';
-                header += '      <li class="action-settings">';
-                header += '        <a href="javascript:void(0)" class="btn btn-default" title="Remove all">';
-                header += '        Remove all';
-                header += '        </a>';
-                header += '      </li>';
-                header += '    </ul>';
-                header += '  </div>';
-                header += '</div>';
 
-                tpl = '';
-                tpl += '<div id="local-contacts" class="engagement-list" style="display: block;">';
+                tpl = '<div id="local-contacts" class="engagement-list" style="display: block;">';
                 tpl += '<ul class="items clearfix" style="height: auto;">';
 
+                var avatar = '';
+
                 for (var i=0, s = keys.length; i < s; i++) {
+                    numContacts++;
+
                     person = items[keys[i]];
 
                     // if the image is 404, it needs to be replaced
@@ -178,68 +140,44 @@
                         }
                     });
 
-                    // console.log(person);
+                    avatar = (person.image !== undefined ?
+                          `<img src="${person.image}" height="150" width="150" alt="">`
+                            :
+                          `<img src="${ghost_image}" height="150" width="150" alt="">`
+                    );
 
-                    tpl += '<li id="local-contact-' + keys[i] + '" class="engagement-card with-dimiss-button customcard"';
-                        tpl += ' style="-moz-transition: width '+animation_duration+'s';
-                        tpl += '-ms-transition: width '+animation_duration+'s;';
-                        tpl += '-o-transition: width '+animation_duration+'s;';
-                        tpl += '-webkit-transition: width '+animation_duration+'s;';
-                        tpl += 'transition: width '+animation_duration+'s;';
-                        tpl += '">';
-                    tpl += '<div class="engagement-body-left">';
-                    tpl += ' <a href="'+person.url+'" class="image">';
-                    if (person.image !== undefined) {
-                        tpl += '  <img src="'+person.image+'" height="150" width="150" alt="">';
-                    } else {
-                        tpl += '  <img src="'+ghost_image+'" height="150" width="150" alt="">';
-                    }
-                    tpl += ' </a>';
-                    tpl += '</div>';
-                    tpl += '<div class="engagement-body-right">';
-                    tpl += ' <header class="header"><strong><a href="'+person.url+'">'+person.name+'</a></strong></header>';
-                    tpl += ' <p class="content">'+person.position+'</p>';
-                    tpl += ' <p class="content" style="margin-top:0.5em;padding-top:0">'+person.location+'</p>';
-                    tpl += '</div>';
-                    tpl += '<div class="engagement-action-container">';
-                    tpl += ' <div class="button-wrapper">';
-                    tpl += '  <span class="action-button custom"><span class="ok-sign-glyph"></span>Saved locally</span>';
-                    tpl += '  <div class="dismiss-button custom">';
-                    tpl += '    <a href="' + person.url + '" class="left"><span class="follow-glyph" role="presentation"></span>Connect</a>';
-                    tpl += '    <a href="javascript:undefined" data-id="' + keys[i] + '" class="removebutton right"><span class="dismiss-glyph" role="presentation"></span>Remove</a>';
-                    tpl += '  </div>';
-                    tpl += ' </div>';
-                    tpl += '</div>';
-                    tpl += '</li>';
-
-                    //console.log(tpl);
+                    tpl += `<li id="local-contact-${keys[i]}" class="engagement-card with-dimiss-button customcard"
+                         style="-moz-transition: width ${animation_duration}s
+                        -ms-transition: width ${animation_duration}s;
+                        -o-transition: width ${animation_duration}s;
+                        -webkit-transition: width ${animation_duration}s;
+                        transition: width ${animation_duration}s;">
+                    <div class="engagement-body-left">
+                     <a href="${person.url}" class="image">
+                     ${avatar}
+                     </a>
+                    </div>
+                    <div class="engagement-body-right">
+                     <header class="header"><strong><a href="${person.url}">${person.name}</a></strong></header>
+                     <p class="content">${person.position}</p>
+                     <p class="content" style="margin-top:0.5em;padding-top:0">${person.location}</p>
+                    </div>
+                    <div class="engagement-action-container">
+                     <div class="button-wrapper">
+                      <span class="action-button custom"><span class="ok-sign-glyph"></span>Saved locally</span>
+                      <div class="dismiss-button custom">
+                        <a href="${person.url}" class="left"><span class="follow-glyph" role="presentation"></span>Connect</a>
+                        <a href="javascript:undefined" data-id="${keys[i]}" class="removebutton right"><span class="dismiss-glyph" role="presentation"></span>Remove</a>
+                      </div>
+                     </div>
+                    </div>
+                    </li>`;
                 }
+
                 tpl += '</ul>';
 
                 // TODO
                 // pagination
-
-
-
-
-
-
-
-
-
-                //tpl += '<div class="more-bar-container" style="display: block;">';
-                //tpl += '  <div class="ruler"></div>';
-                //tpl += '  <div class="more-bar-wrapper" style="visibility: visible;">';
-                //tpl += '    <div tabindex="0" class="more-bar">';
-                //tpl += '      <p>';
-                //tpl += '        <label class="prev" role="button" style="display:none">Previous</label> ';
-                //tpl += '        <label class="next" role="button">More</label>';
-                //tpl += '      </p>';
-                //tpl += '      <span title="Load all stored contacts"></span>';
-                //tpl += '    </div>';
-                //tpl += '  </div>';
-                //tpl += '</div>';
-
 
                 tpl += '<div class="more-bar-container" style="display: block;">';
                 tpl += '  <div class="ruler"></div>';
@@ -247,18 +185,36 @@
                 tpl += '  </div>';
                 tpl += '</div>';
 
-
                 tpl += '</div>';
+
+
+
+                header = `<div class="top-bar with-image">
+                  <div class="header">
+                    <div class="image-wrapper big-icon">
+                      <img src="${topbar_image}" alt="" class="connected-icon">
+                    </div>
+                    <div class="left-entity">
+                      <div class="content-wrapper">
+                        <h1 class="name">Stored Contacts</h1>
+                        <h3>You have <span id="num_contacts">${numContacts}</span> locally stored contacts.</h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="header-dropdown">
+                    <ul class="page-header-menu">
+                      <li class="action-settings">
+                        <a href="javascript:void(0)" class="btn btn-default" title="Remove all">
+                        Remove all
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>`;
 
 
                 var newdiv = document.createElement("div");
                 newdiv.innerHTML = header + tpl;
-
-                // set the contacts
-                var nc = document.querySelector('#num_contacts');
-                if (nc) {
-                    nc.innerHTML = '888';
-                }
 
                 // insert the local connections into the page
                 var listcontainer = document.querySelector('#contact-list-container');
