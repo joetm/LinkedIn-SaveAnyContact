@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "LinkedIn Save Contact",
-  "description": "LinkedIn allows you only to save contacts that are in your network. With this plugin, you can save any profile locally in your browser.",
+  "description": "LinkedIn allows you only to save contacts that are in your network. With this plugin, you can save any profile locally.",
   "homepage_url": "http://komasurfer.com",
   "version": "0.1",
   "permissions": [

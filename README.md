@@ -1,3 +1,5 @@
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/d/idglehggkglmklokplbgmceenhfggdae.svg)]()
+
 Save Any Contact on LinkedIn
 ==============================
 
@@ -34,6 +36,5 @@ That means two things:
 
 TODO
 ====
-* Add to Chrome Web Store
 * Improve position of the contact list on the network page
 * Sync to other browsers.
